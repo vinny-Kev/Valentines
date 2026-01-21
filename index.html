@@ -36,6 +36,10 @@
             height: 130px;
             cursor: pointer;
             filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.12));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
 
         .envelope {
@@ -43,11 +47,12 @@
             height: 100%;
             position: relative;
             perspective: 1000px;
-            background: #fdf6f9;
+            background: transparent;
             border-radius: 0 0 14px 14px;
             transform-style: preserve-3d;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: none;
+            overflow: hidden;
         }
 
         .msg {
@@ -111,6 +116,7 @@
             z-index: 2;
             bottom: 0;
             filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.25));
+            background: #f4c7d6;
         }
 
         .left-part::before,
@@ -167,7 +173,7 @@
         }
 
         .envelope-instruction {
-            margin-top: 170px;
+            margin-top: 0;
             font-family: 'Dancing Script', cursive;
             font-size: 18px;
             color: #3a3a3a;
@@ -350,16 +356,16 @@
     </style>
 </head>
 <body>
+    
     <div class="container">
         <!-- Envelope Section -->
         <div class="envelope-wrapper">
             <div class="envelope" id="envelope">
-                <div class="msg">Click to read ❤️<span class="count">❤</span></div>
                 <div class="top-part"></div>
                 <div class="right-part"></div>
                 <div class="left-part"></div>
             </div>
-            <div class="envelope-instruction">Tap the envelope</div>
+            <div class="envelope-instruction">Click the envelope</div>
         </div>
 
         <!-- Gallery Section -->
