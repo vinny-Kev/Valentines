@@ -148,11 +148,35 @@
             transform: rotateX(1deg);
             filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
             z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background: #ea9bb8;
+        }
+
+        /* inverted scallops carved into the flap edge */
+        .top-part::before,
+        .top-part::after {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 16px;
+            background-image: radial-gradient(circle at 9px 9px, #f8e4eb 9px, transparent 9px);
+            background-size: 18px 18px;
+            background-repeat: repeat-x;
+            bottom: -9px;
+            opacity: 0.9;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
         }
 
         .top-part::before {
-            clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);
-            background: #ea9bb8;
+            left: 50%;
+            transform-origin: right center;
+            transform: translateX(-100%) rotate(29deg);
+        }
+
+        .top-part::after {
+            left: 50%;
+            transform-origin: left center;
+            transform: rotate(-29deg);
         }
 
         .envelope.open .msg {
@@ -206,6 +230,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
+            align-items: start; /* prevent items stretching to the tallest row */
         }
 
         .gallery-item {
@@ -213,9 +238,17 @@
             border-radius: 14px;
             overflow: hidden;
             cursor: pointer;
-            aspect-ratio: 1;
             background: linear-gradient(135deg, #f6d6e2, #f1c6d9);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            display: flex;
+            flex-direction: column;
+            height: auto; /* allow cards to size to their own content */
+        }
+
+        .media-frame {
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
         }
 
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -253,6 +286,54 @@
             backdrop-filter: blur(6px);
             letter-spacing: 0.3px;
         }
+
+        .item-meta {
+            padding: 12px 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.82);
+            color: #4a2740;
+        }
+
+        .item-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 22px;
+            line-height: 1.2;
+            color: #bf2f67;
+        }
+
+        .item-caption {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 48px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            transition: max-height 0.3s ease;
+        }
+
+        .item-caption.expanded {
+            -webkit-line-clamp: unset;
+            max-height: 500px;
+        }
+
+        .read-more {
+            align-self: flex-start;
+            background: #e56997;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(229, 105, 151, 0.28);
+        }
+
+        .read-more:hover { background: #d55584; }
 
         /* Modal Styles */
         .modal {
@@ -292,15 +373,15 @@
 
         .modal-close {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: 8px; /* Adjusted for better alignment */
+            right: 8px; /* Adjusted for better alignment */
             background: #e56997;
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 36px; /* Adjusted size */
+            height: 36px; /* Adjusted size */
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 20px; /* Adjusted font size */
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -308,7 +389,35 @@
             box-shadow: 0 4px 10px rgba(229, 105, 151, 0.32);
         }
 
+        .modal-close:hover {
+            background: #d55584;
+        }
+
         /* Letter Modal */
+        .letter-wrapper {
+            position: relative;
+            background: linear-gradient(135deg, #fff7fb, #ffe4f0);
+            border: 1px solid #f3c9da;
+            border-radius: 18px;
+            padding: 26px 22px 30px;
+            box-shadow: inset 0 1px 0 #fff, 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .letter-wrapper::before,
+        .letter-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            height: 10px;
+            border-radius: 8px;
+            background: repeating-linear-gradient(90deg, transparent 0 12px, rgba(227, 144, 176, 0.25) 12px 18px);
+            opacity: 0.7;
+        }
+
+        .letter-wrapper::before { top: 12px; }
+        .letter-wrapper::after { bottom: 12px; transform: scaleX(-1); }
+
         .letter-content {
             font-family: 'Dancing Script', cursive;
             font-size: 22px;
@@ -373,10 +482,32 @@
             <h2 class="gallery-title">Our Memories Together ❤️</h2>
             <div class="gallery-grid" id="gallery">
                 <div class="gallery-item" data-image="1" data-available="true">
-                    <img src="photobooth.jpg" alt="Photo 1" class="gallery-media">
+                    <div class="media-frame">
+                        <img src="photobooth.jpg" alt="Photo 1" class="gallery-media">
+                    </div>
+                    <div class="item-meta">
+                        <h3 class="item-title">That Smile</h3>
+                        <p class="item-caption">You see that first pic? 
+                            yeah, I know, I should've been looking at the camera but honestly, 
+                            when I saw you smiling for the camera through that monitor I knew I had to take a close look at your smile and my head turned on its own,
+                            your smile was radiant, it was divine, and looking at your smile at that moment made me feel like I was staring straight into heaven.
+                            the twinkle in your eyes would make the stars jealous.😝
+                        </p>
+                    </div>
                 </div>
                 <div class="gallery-item" data-image="2" data-available="true">
-                    <img src="selfie.jpg" alt="Photo 2" class="gallery-media">
+                    <div class="media-frame">
+                        <img src="selfie.jpg" alt="Photo 2" class="gallery-media">
+                    </div>
+                    <div class="item-meta">
+                        <h3 class="item-title">First Cinema Ever!</h3>
+                        <p class="item-caption">I honestly don’t remember much about the movie anymore. 
+                            What stayed with me was the feeling of you leaning on my shoulder while we watched. 
+                            It was such a small, simple thing, but it made me feel incredibly close to you. 
+                            That moment made me realize how much I truly cherish our time together. 
+                            It’s kind of funnybecause even though I was the one holding you, I was the one who felt safe. 💝
+                            </p>
+                    </div>
                 </div>
                 <div class="gallery-item unavailable" data-available="false">
                     <div class="blur-overlay">Some more memories we need to make 💫</div>
@@ -392,42 +523,48 @@
                 </div>
             </div>
         </div>
+
+        <footer class="footer">
+            <span>Made with lots of love</span><span class="dot">•</span><span>More memories loading soon</span>
+        </footer>
     </div>
 
     <!-- Letter Modal -->
     <div class="modal" id="letterModal">
         <div class="modal-content">
             <button class="modal-close" id="closeLetterModal">&times;</button>
-            <div class="letter-content">
-                <h2>My Dearest</h2>
-                <p>Love is hard.</p>
-                <p>You are not hard to love.</p>
-                <br>     
-                <p>Your love is silent.</p>
-                <p>Mine is loud.</p>
-                <br>
-                <p>And even when my love fills the room, I still</p>
-                <p>hear yours.</p>
-                <p>I see the small ways you try.</p>
-                <p>The pauses. The presence. The moments you let me in.</p>
-                <p>I notice them. I adore them.</p>
-                <br>
-                <p>I don't know what taught you to guard your heart like this, and</p>
-                <p>I won't force myself in just to understand.</p>
-                <p>I'm here because a soul like yours deserves patience, safety, and real love.</p>
-                <br>
-                <p>So I'll stay outside the walls.</p>
-                <p>I'll sing.</p>
-                <p>I'll write.</p>.</p>
-                <p>I'll slip poems through the cracks.</p>
-                <p>Because you deserve to be loved gently and fully.</p>
-                <br>
-                <p>This Valentine's, I'd love to be with you.</p>
-                <p>It doesn't have to be exactly the 14th.</p>
-                <p>If Manila isn't easy, we'll make Pampanga or Tarlac ours.</p>
-                <p>Time and distance don't scare me when it comes to you.</p>
-                
-                <div class="letter-signature">Now let me ask,<br>❤️ Will you do me the honor of letting me be your Valentine?❤️</div>
+            <div class="letter-wrapper">
+                <div class="letter-content">
+                    <h2>My Dearest</h2>
+                    <p>Love is hard.</p>
+                    <p>You are not hard to love.</p>
+                    <br>     
+                    <p>Your love is silent.</p>
+                    <p>Mine is loud.</p>
+                    <br>
+                    <p>And even when my love fills the room, I still</p>
+                    <p>hear yours.</p>
+                    <p>I see the small ways you try.</p>
+                    <p>The pauses. The presence. The moments you let me in.</p>
+                    <p>I notice them. I adore them.</p>
+                    <br>
+                    <p>I don't know what taught you to guard your heart like this, and</p>
+                    <p>I won't force myself in just to understand.</p>
+                    <p>I'm here because a soul like yours deserves patience, safety, and real love.</p>
+                    <br>
+                    <p>So I'll stay outside the walls.</p>
+                    <p>I'll sing.</p>
+                    <p>I'll write.</p>
+                    <p>I'll slip poems through the cracks.</p>
+                    <p>Because you deserve to be loved gently and fully.</p>
+                    <br>
+                    <p>This Valentine's, I'd love to be with you.</p>
+                    <p>It doesn't have to be exactly the 14th.</p>
+                    <p>If Manila isn't easy, we'll make Pampanga or Tarlac ours.</p>
+                    <p>Time and distance don't scare me when it comes to you.</p>
+                    
+                    <div class="letter-signature">Now let me ask,<br>❤️ Will you do me the honor of letting me be your Valentine?❤️</div>
+                </div>
             </div>
         </div>
     </div>
@@ -504,6 +641,25 @@
                 imageModal.classList.add('active');
                 createHearts();
             });
+        });
+
+        // Read more toggles for captions
+        const captions = document.querySelectorAll('.item-caption');
+        captions.forEach(caption => {
+            // Force clamp measurement
+            const needsMore = caption.scrollHeight > caption.clientHeight + 2;
+            if (!needsMore) return;
+
+            const btn = document.createElement('button');
+            btn.className = 'read-more';
+            btn.textContent = 'Read more...';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expanded = caption.classList.toggle('expanded');
+                btn.textContent = expanded ? 'Read less' : 'Read more...';
+            });
+
+            caption.parentElement.appendChild(btn);
         });
 
         closeImageModal.addEventListener('click', (e) => {
